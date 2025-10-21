@@ -57,7 +57,7 @@ $result = $conn->query($sql);
                     </div>
                     <br>
                     <div class="interactive-content">
-                        <h2>Completed Tasks</h2>
+                        <h2>Confirmed Matches</h2>
                         <br>
                         <hr class="interactive-underline">
                         <br>
@@ -95,9 +95,9 @@ $result = $conn->query($sql);
                                 <div class="boxes">
                                     <table>
                                         <tr>
-                                            <th>Donation Type</th>
-                                            <th>Total</th>
                                             <th>Organ</th>
+                                            <th>Total</th>
+                                            <th>Blood Cell</th>
                                             <th>Total</th>
                                             <th>Blood Type</th>
                                             <th>Total</th>
@@ -139,13 +139,14 @@ $result = $conn->query($sql);
                         <br>
                         <hr class="interactive-underline">
                         <br>
-                        <h2>New Matches:</h2>
-                        <div class="reports-content">
-                            
-                            <?php
-                                include_once "matching_dash.php";
-                                displayNewMatches($conn);
-                            ?>
+                        <div class="reports-container">
+                            <h2>New Matches:</h2>
+                            <div class="reports-content">
+                                <?php
+                                    include_once "matching_dash.php";
+                                    displayNewMatches($conn);
+                                ?>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -2,7 +2,7 @@
 include "../doctors_db.php";
 
 function displayCurrentlyOnGoing1($conn) {
-    $sql = "SELECT COUNT(*) AS total_pending FROM donors WHERE status = 'Pending'";
+    $sql = "SELECT COUNT(*) AS total_pending FROM donations WHERE status = 'Pending'";
     $result = $conn->query($sql);
 
     if ($result && $row = $result->fetch_assoc()) {
@@ -32,12 +32,14 @@ function displayFoundMatches($conn) {
 
     $sql_organ = "
         SELECT 
-            d.organ, 
+            d.organ_type, 
             COUNT(*) AS total_matches
-        FROM donors d
+        FROM donations d
         INNER JOIN patients p
-            ON d.organ = p.organ
-        GROUP BY d.organ
+            ON d.organ_type = p.organ_type
+        WHERE d.status = 'Pending'
+        AND p.status = 'Pending'
+        GROUP BY d.organ_type
         ORDER BY total_matches DESC
     ";
 
@@ -51,13 +53,13 @@ function displayFoundMatches($conn) {
                 </tr>";
         while ($row = $result_organ->fetch_assoc()) {
             echo "<tr>
-                    <td>{$row['organ']}</td>
+                    <td>{$row['organ_type']}</td>
                     <td>{$row['total_matches']}</td>
                 </tr>";
         }
         echo "</table><br>";
     } else {
-        echo "<p>No organ matches found.</p>";
+        echo "<p>No organ_type matches found.</p>";
     }
 
     echo "<h3 class='other-text'>Blood Type Match</h3>";
@@ -66,9 +68,11 @@ function displayFoundMatches($conn) {
         SELECT 
             d.blood_type, 
             COUNT(*) AS total_matches
-        FROM donors d
+        FROM donations d
         INNER JOIN patients p
             ON d.blood_type = p.blood_type
+        WHERE d.status = 'Pending'
+        AND p.status = 'Pending'
         GROUP BY d.blood_type
         ORDER BY total_matches DESC
     ";
@@ -94,7 +98,7 @@ function displayFoundMatches($conn) {
 }
 
 function displayCompletedTasks($conn) {
-    $sql = "SELECT COUNT(*) AS total_completion FROM donors WHERE status = 'Completed'";
+    $sql = "SELECT COUNT(*) AS total_completion FROM donations WHERE status = 'Confirmed'";
     $result = $conn->query($sql);
 
     if ($result && $row = $result->fetch_assoc()) {
@@ -108,7 +112,7 @@ function displayCompletedTasks($conn) {
     echo "</td>";
     echo "<td>";
 
-    $sql = "SELECT COUNT(*) AS total_completion FROM patients WHERE status = 'Completed'";
+    $sql = "SELECT COUNT(*) AS total_completion FROM patients WHERE status = 'Confirmed'";
     $result = $conn->query($sql);
 
     if ($result && $row = $result->fetch_assoc()) {

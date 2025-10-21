@@ -15,18 +15,29 @@
         ?>
     </div>
 
-    <hr>
+    <hr class="interactive-underline">
 
-    <h2>Donor Status Overview</h2>
+    <h2>Donor Status</h2>
     <div class="status-section">
         <?php
-            $statuses = ['Pending', 'Approved', 'Rejected', 'Completed', 'Cancelled'];
-            foreach ($statuses as $status) {
-                echo "<div class='status-table'>";
-                echo "<h2>$status</h2>";
-                displayDonorsByStatus($status);
-                echo "</div>";
-            }
+            echo "<div class='status-table'>";
+            echo "<h2 class='other-text'>Pending</h2>";
+            displayDonorsByPending($conn);
+            echo "</div>";
+        ?>
+
+        <?php
+            echo "<div class='status-table'>";
+            echo "<h2 class='other-text'>Confirmed</h2>";
+            displayDonorsByConfirmed($conn);
+            echo "</div>";
+        ?>
+
+        <?php
+            echo "<div class='status-table'>";
+            echo "<h2 class='other-text'>Declined</h2>";
+            displayDonorsByDeclined($conn);
+            echo "</div>";
         ?>
     </div>
 </body>

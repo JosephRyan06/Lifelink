@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins');
+
 /* DONOR CONTENTS */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Poppins', sans-serif;
     background: #f9f9f9;
     margin: 20px;
 }
@@ -43,12 +45,50 @@ tr:nth-child(even) {
 }
 
 .status-table {
-    margin-left: 5px;
-    margin-right: 5px;
+    display: grid;
+    margin: 10px;
 }
 
 .status-section {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: space-evenly;
+    background-color: #9d9d9d;
+}
+
+.interactive-underline {
+    background-color: #9d9d9d;
+}
+
+body:hover .interactive-underline {
+    background-color: #2DAF89;
+}
+
+.content {
+    display: block;
+    box-sizing: border-box;
+    background-color: white;
+    padding: 10px;
+    width: 200px;
+    border-radius: 10px;
+    margin: 20px;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.other-text {
+    display: block;
+    box-sizing: border-box;
+    text-align: center;
+    color: white;
+}
+
+.title {
+    display: block;
+    box-sizing: border-box;
+    padding: 10px;
+    background-color: #2DAF89;
 }

@@ -9,28 +9,40 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$id = $_SESSION['user_id']; // ✅ Logged-in doctor ID
+$id = intval($_SESSION['user_id']);
 
-// ✅ Fetch doctor info
-$user_sql = "SELECT * FROM doctor WHERE id = $id";
+//  Fetch logged-in user info
+$user_sql = "SELECT * FROM users WHERE id = $user_id";
 $user_result = mysqli_query($conn, $user_sql);
 
 if ($user_result && mysqli_num_rows($user_result) > 0) {
     $user = mysqli_fetch_assoc($user_result);
 } else {
-    // Default if not found
+    // fallback values
     $user = [
-        'id' => $id,
-        'username' => '',
-        'email' => '',
-        'phone_num' => '',
-        'name' => '',
+        'id' => $user_id,
+        'username' => 'testuser',
+        'fullname' => 'Test User',
+        'email' => 'test@example.com',
+        'role' => 'donor',
+        'phone' => '',
+        'location' => '',
+        'created_at' => date('Y-m-d H:i:s')
+    ];
+}
+
+$per_sql = "SELECT * FROM doctors WHERE id = $user_id";
+$per_result = mysqli_query($conn, $per_sql);
+
+if ($per_result && mysqli_num_rows($per_result) > 0) {
+    $personal_info = mysqli_fetch_assoc($per_result);
+} else {
+    $personal_info = [
         'age' => '',
         'gender' => '',
         'license' => '',
-        'location' => '',
-        'description' => '',
-        'created_at' => ''
+        'workplace' => '',
+        'description' => ''
     ];
 }
 
@@ -38,36 +50,38 @@ if ($user_result && mysqli_num_rows($user_result) > 0) {
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $section = $_POST['section'];
 
-    // --- ACCOUNT INFO ---
+    //ACCOUNT INFO
     if ($section === "account") {
         $username = mysqli_real_escape_string($conn, $_POST['username']);
+        $fullname = mysqli_real_escape_string($conn, $_POST['full_name']);
         $email = mysqli_real_escape_string($conn, $_POST['email']);
-        $phone_num = mysqli_real_escape_string($conn, $_POST['phone_num']);
-        $name = mysqli_real_escape_string($conn, $_POST['name']);
+        $phone = mysqli_real_escape_string($conn, $_POST['phone']);
+        $location = mysqli_real_escape_string($conn, $_POST['location']);
 
-        if (!empty($username) && !empty($name) && !empty($email)) {
-            $check = mysqli_query($conn, "SELECT id FROM doctor WHERE id = $id");
+        $columns_check = mysqli_query($conn, "SHOW COLUMNS FROM users LIKE 'phone'");
+        $has_phone = mysqli_num_rows($columns_check) > 0;
+        $columns_check2 = mysqli_query($conn, "SHOW COLUMNS FROM users LIKE 'location'");
+        $has_location = mysqli_num_rows($columns_check2) > 0;
 
-            if (mysqli_num_rows($check) > 0) {
-                $sql = "UPDATE doctor 
-                        SET username='$username', email='$email', phone_num='$phone_num', name='$name' 
-                        WHERE id=$id";
-            } else {
-                $sql = "INSERT INTO doctor (id, username, email, phone_num, name, created_at)
-                        VALUES ($id, '$username', '$email', '$phone_num', '$name', NOW())";
-            }
+        $update_parts = [
+            "username='$username'",
+            "fullname='$fullname'",
+            "email='$email'"
+        ];
 
-            if (mysqli_query($conn, $sql)) {
-                echo "<script>alert('Account info updated!');</script>";
-            } else {
-                echo "<script>alert('Error: " . mysqli_error($conn) . "');</script>";
-            }
+        if ($has_phone) $update_parts[] = "phone='$phone'";
+        if ($has_location) $update_parts[] = "location='$location'";
+
+        $sql = "UPDATE users SET " . implode(", ", $update_parts) . " WHERE id=$user_id";
+
+        if (mysqli_query($conn, $sql)) {
+            echo "<script>alert('Account information updated successfully!');</script>";
         } else {
-            echo "<script>alert('Please fill in all required fields!');</script>";
+            echo "<script>alert('Error updating account: " . mysqli_error($conn) . "');</script>";
         }
     }
 
-    // --- PERSONAL INFO ---
+    //PERSONAL INFO
     if ($section === "personal_info") {
         $age = intval($_POST['age']);
         $gender = mysqli_real_escape_string($conn, $_POST['gender']);
@@ -75,10 +89,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $location = mysqli_real_escape_string($conn, $_POST['location']); // ✅ your column name
         $description = mysqli_real_escape_string($conn, $_POST['description']); // ✅ text input
 
-        $check = mysqli_query($conn, "SELECT id FROM doctor WHERE id = $id");
+        $check = mysqli_query($conn, "SELECT id FROM doctors WHERE id = $id");
 
         if (mysqli_num_rows($check) > 0) {
-            $sql = "UPDATE doctor 
+            $sql = "UPDATE doctors 
                     SET age=$age, gender='$gender', license='$license', location='$location', description='$description'
                     WHERE id=$id";
         } else {

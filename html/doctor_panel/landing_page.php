@@ -31,11 +31,9 @@
                         <li class="nav-link">
                             <a href="profile_page/profile_info.php" target="top-page">Profile</a>
                             <hr class="nav-underline">
-                        </li>
-                            <li class="nav-link">
-                                <a href="../../php/logout.php">Log Out</a>
-                                <hr class="nav-underline">
-                            </li>
+                        <li class="nav-link">
+                            <a href="../../php/logout.php">Log Out</a>
+                            <hr class="nav-underline">
                         </li>
                     </ul>
                 </nav>

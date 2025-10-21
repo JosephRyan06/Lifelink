@@ -12,7 +12,7 @@ img {
     image-rendering: crisp-edges;
 }
 
-body, button, input {
+body, button, input, select {
     font-family: 'Poppins', sans-serif;
 }
 
@@ -53,16 +53,35 @@ button {
     border-radius: 10px;
 }
 
-input {
+input, select {
     border: 2.5px solid #D9D9D9;
+    color: #777777;
+    background-color: white;
     border-radius: 10px;
 }
 
-input:hover {
+select {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin: 2.6px;
+}
+
+option {
+    outline: none;
+    border: none;
+    background-color: #2DAF89;
+    color: white;
+}
+
+option:hover {
+    background-color: #8EE861;
+}
+
+input:hover, select:hover {
     border: 2.5px solid #2DAF89;
 }
 
-input:focus {
+input:focus, select:focus {
     outline: none;
     border: 2.5px solid #8EE861;
 }
@@ -184,5 +203,5 @@ th {
 }
 
 .blood-type {
-    width: 54px;
+    width: 20px;
 }

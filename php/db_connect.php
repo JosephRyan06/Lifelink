@@ -1,7 +1,7 @@
 <?php
 $host = "localhost";   
 $user = "root";        
-$pass = "";            
+$pass = "josephryan2006";            
 $dbname = "db_lifelink"; 
 
 $conn = new mysqli($host, $user, $pass, $dbname);
