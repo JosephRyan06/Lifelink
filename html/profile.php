@@ -1,8 +1,8 @@
 <?php
 $required_role = 'donor';
-require_once '../php/check_session.php'; // ensures $conn and $_SESSION exist
+require_once '../php/check_session.php';
 
-// ✅ Ensure user session is valid
+//  Ensure user session is valid
 if (!isset($_SESSION['user_id'])) {
     echo "<script>alert('Please log in first.'); window.location.href='../html/Log In.php';</script>";
     exit;
@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = intval($_SESSION['user_id']);
 
-// ✅ Fetch logged-in user info
+//  Fetch logged-in user info
 $user_sql = "SELECT * FROM users WHERE id = $user_id";
 $user_result = mysqli_query($conn, $user_sql);
 
@@ -40,8 +40,7 @@ if ($med_result && mysqli_num_rows($med_result) > 0) {
     $medical = [
         'age' => '',
         'gender' => '',
-        'type_blood' => '',
-        'organ_type' => ''
+        'blood_type' => ''
     ];
 }
 
@@ -83,17 +82,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($section === "medical") {
             $age = intval($_POST['age']);
             $gender = mysqli_real_escape_string($conn, $_POST['gender']);
-            $type_blood = mysqli_real_escape_string($conn, $_POST['type_blood']);
-            $organ_type = mysqli_real_escape_string($conn, $_POST['organ_type']);
+            $blood_type = mysqli_real_escape_string($conn, $_POST['blood_type']);
 
             $check = mysqli_query($conn, "SELECT * FROM donations WHERE user_id=$user_id");
             if (mysqli_num_rows($check) > 0) {
                 $sql = "UPDATE donations
-                        SET age=$age, gender='$gender', type_blood='$type_blood', organ_type='$organ_type' 
+                        SET age=$age, gender='$gender', blood_type='$blood_type' 
                         WHERE user_id=$user_id";
             } else {
-                $sql = "INSERT INTO donations (user_id, age, gender, type_blood, organ_type)
-                        VALUES ($user_id, $age, '$gender', '$type_blood', '$organ_type')";
+                $sql = "INSERT INTO donations (user_id, age, gender, blood_type)
+                        VALUES ($user_id, $age, '$gender', '$blood_type')";
             }
 
             if (mysqli_query($conn, $sql)) {
@@ -128,7 +126,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             background-color: #E1E1E1;
             padding: 20px;
         }
-               /* NAVIGATION BAR */
+
+        /* NAVIGATION BAR */
         .nav-bar {
             display: flex;
             align-items: center;
@@ -141,18 +140,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         .nav-container {
- display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #35475B; /* dark blue */
-    height: 70px;
-    width: 100%;
-    padding: 0 80px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    border-bottom: 1px solid #2F3E4E; /* subtle bottom border */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #35475B; /* dark blue */
+            height: 70px;
+            width: 100%;
+            padding: 0 80px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            border-bottom: 1px solid #2F3E4E; /* subtle bottom border */
         }
 
         .logo {
@@ -586,32 +585,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <div class="form-row">
                 <label> 
                     Blood Type:
-                    <select name="type_blood" required>
+                    <select name="blood_type" required>
                         <option value="">Select Blood Type</option>
-                        <option value="A+" <?= ($medical['type_blood'] ?? '') == 'A+' ? 'selected' : '' ?>>A+</option>
-                        <option value="A-" <?= ($medical['type_blood'] ?? '') == 'A-' ? 'selected' : '' ?>>A-</option>
-                        <option value="B+" <?= ($medical['type_blood'] ?? '') == 'B+' ? 'selected' : '' ?>>B+</option>
-                        <option value="B-" <?= ($medical['type_blood'] ?? '') == 'B-' ? 'selected' : '' ?>>B-</option>
-                        <option value="AB+" <?= ($medical['type_blood'] ?? '') == 'AB+' ? 'selected' : '' ?>>AB+</option>
-                        <option value="AB-" <?= ($medical['type_blood'] ?? '') == 'AB-' ? 'selected' : '' ?>>AB-</option>
-                        <option value="O+" <?= ($medical['type_blood'] ?? '') == 'O+' ? 'selected' : '' ?>>O+</option>
-                        <option value="O-" <?= ($medical['type_blood'] ?? '') == 'O-' ? 'selected' : '' ?>>O-</option>
+                        <option value="A+" <?= ($medical['blood_type'] ?? '') == 'A+' ? 'selected' : '' ?>>A+</option>
+                        <option value="A-" <?= ($medical['blood_type'] ?? '') == 'A-' ? 'selected' : '' ?>>A-</option>
+                        <option value="B+" <?= ($medical['blood_type'] ?? '') == 'B+' ? 'selected' : '' ?>>B+</option>
+                        <option value="B-" <?= ($medical['blood_type'] ?? '') == 'B-' ? 'selected' : '' ?>>B-</option>
+                        <option value="AB+" <?= ($medical['blood_type'] ?? '') == 'AB+' ? 'selected' : '' ?>>AB+</option>
+                        <option value="AB-" <?= ($medical['blood_type'] ?? '') == 'AB-' ? 'selected' : '' ?>>AB-</option>
+                        <option value="O+" <?= ($medical['blood_type'] ?? '') == 'O+' ? 'selected' : '' ?>>O+</option>
+                        <option value="O-" <?= ($medical['blood_type'] ?? '') == 'O-' ? 'selected' : '' ?>>O-</option>
                     </select>
                 </label>
 
-                    <label>
-                        Organ Type:
-                        <select name="organ_type">
-                            <option value="">Select Organ Type</option>
-                            <option value="Kidney" <?= ($medical['organ_type'] ?? '') == 'Kidney' ? 'selected' : '' ?>>Kidney</option>
-                            <option value="Liver" <?= ($medical['organ_type'] ?? '') == 'Liver' ? 'selected' : '' ?>>Liver</option>
-                            <option value="Heart" <?= ($medical['organ_type'] ?? '') == 'Heart' ? 'selected' : '' ?>>Heart</option>
-                            <option value="Lung" <?= ($medical['organ_type'] ?? '') == 'Lung' ? 'selected' : '' ?>>Lung</option>
-                            <option value="Pancreas" <?= ($medical['organ_type'] ?? '') == 'Pancreas' ? 'selected' : '' ?>>Pancreas</option>
-                            <option value="Cornea" <?= ($medical['organ_type'] ?? '') == 'Cornea' ? 'selected' : '' ?>>Cornea</option>
-                            <option value="Bone Marrow" <?= ($medical['organ_type'] ?? '') == 'Bone Marrow' ? 'selected' : '' ?>>Bone Marrow</option>
-                        </select>
-                    </label>
                 </div>
 
                 <button class="btn btn-primary" type="submit">Save Medical Information</button>

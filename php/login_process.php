@@ -57,7 +57,7 @@ if ($result && $result->num_rows === 1) {
             header('Location: ../html/admin.php');
             exit;
         } elseif ($_SESSION['role'] === 'doctor') {
-            header('Location: ../html/doctor_panel/landing_page.php');
+            header('Location: ../html/doctor_panel/dashboard_page/dashboard.php');
             exit;
         } elseif ($_SESSION['role'] === 'donor') {
             header('Location: ../html/donation.php');

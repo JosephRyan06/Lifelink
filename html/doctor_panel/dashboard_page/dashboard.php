@@ -1,5 +1,6 @@
 <?php
-include "../doctors_db.php";
+$required_role = 'doctor';
+require_once '../../../php/check_session.php';
 
 $sql = "SELECT * FROM patients ORDER BY id DESC";
 $result = $conn->query($sql);
@@ -15,6 +16,35 @@ $result = $conn->query($sql);
 
         <title>LifeLink</title>
         <body>
+            <div class="nav-bar">
+                <div class="nav-container">
+                    <div class="logo">
+                        <img src="../../../image/logo.png" alt="logo">
+                        <h2 class="web-title">LifeLink</h2>
+                    </div>
+                    <nav>
+                        <ul class="nav-menu">
+                            <li class="nav-link">
+                                <a href="dashboard.php">Dashboard</a>
+                                <hr class="default-nav">
+                            </li>
+                            <li class="nav-link">
+                                <a href="../donors_page/donors.php">Donors</a>
+                                <hr class="nav-underline">
+                            </li>
+                            <li class="nav-link">
+                                <a href="../patients_page/patients.php">Patients</a>
+                                <hr class="nav-underline">
+                            </li>
+                            <li class="nav-link">
+                                <a href="../profile_page/profile_info.php">Profile</a>
+                                <hr class="nav-underline">
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
             <div class="content">
                 <div class="content-container-1">
                     <div class="interactive-content">
@@ -57,7 +87,7 @@ $result = $conn->query($sql);
                     </div>
                     <br>
                     <div class="interactive-content">
-                        <h2>Completed Tasks</h2>
+                        <h2>Confirmed Matches</h2>
                         <br>
                         <hr class="interactive-underline">
                         <br>
@@ -69,7 +99,7 @@ $result = $conn->query($sql);
                                 <td>
                                     <?php
                                     include_once "status_checking.php";
-                                    displayCompletedTasks($conn);
+                                    displayConfirmedMatches($conn);
                                     ?>
                                 </td>
                             </tr>
@@ -95,9 +125,9 @@ $result = $conn->query($sql);
                                 <div class="boxes">
                                     <table>
                                         <tr>
-                                            <th>Donation Type</th>
-                                            <th>Total</th>
                                             <th>Organ</th>
+                                            <th>Total</th>
+                                            <th>Blood Cell</th>
                                             <th>Total</th>
                                             <th>Blood Type</th>
                                             <th>Total</th>
@@ -121,6 +151,8 @@ $result = $conn->query($sql);
                                         <tr>
                                             <th>Organ</th>
                                             <th>Total</th>
+                                            <th>Blood Cell</th>
+                                            <th>Total</th>
                                             <th>Blood Type</th>
                                             <th>Total</th>
                                         </tr>
@@ -139,13 +171,14 @@ $result = $conn->query($sql);
                         <br>
                         <hr class="interactive-underline">
                         <br>
-                        <h2>New Matches:</h2>
-                        <div class="reports-content">
-                            
-                            <?php
-                                include_once "matching_dash.php";
-                                displayNewMatches($conn);
-                            ?>
+                        <div class="reports-container">
+                            <h2>New Matches:</h2>
+                            <div class="reports-content">
+                                <?php
+                                    include_once "matching_dash.php";
+                                    displayNewMatches($conn);
+                                ?>
+                            </div>
                         </div>
                     </div>
                 </div>

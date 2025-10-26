@@ -21,7 +21,7 @@
                             <hr class="nav-underline">
                         </li>
                         <li class="nav-link">
-                            <a href="donor_page/donor.php" target="top-page">Donor</a>
+                            <a href="donors_page/donors.php" target="top-page">Donor</a>
                             <hr class="nav-underline">
                         </li>
                         <li class="nav-link">
@@ -31,11 +31,6 @@
                         <li class="nav-link">
                             <a href="profile_page/profile_info.php" target="top-page">Profile</a>
                             <hr class="nav-underline">
-                        </li>
-                            <li class="nav-link">
-                                <a href="../../php/logout.php">Log Out</a>
-                                <hr class="nav-underline">
-                            </li>
                         </li>
                     </ul>
                 </nav>

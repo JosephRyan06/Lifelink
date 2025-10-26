@@ -24,7 +24,7 @@
 
         <ul class="nav-menu" role="menubar" aria-label="Primary">
             <li class="nav-link"><a href="donation.php" aria-current="page">Donation</a><hr class="nav-underline default-underline"></li>
-            <li class="nav-link"><a href="notification.html">Notification</a><hr class="nav-underline"></li>
+            <li class="nav-link"><a href="notification.php">Notification</a><hr class="nav-underline"></li>
             <li class="nav-link"><a href="history.php">Donation History</a><hr class="nav-underline"></li>
             <li class="nav-link"><a href="profile.php">Profile</a><hr class="nav-underline"></li>
         </ul>
@@ -72,7 +72,7 @@
             <div id="bloodType" style="display: none;">
                 <label for="blood" class="field-label">Type of Blood Donation</label>
                 <div class="input-box">
-                <select id="blood" name="blood_type">
+                <select id="blood" name="blood_cell">
                     <option value="" disabled selected>Select blood donation type</option>
                     <option value="Whole Blood">Whole Blood</option>
                     <option value="Platelet">Platelet (Apheresis)</option>

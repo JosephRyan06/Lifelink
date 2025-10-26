@@ -1,43 +1,43 @@
 <?php
-session_start();
-include '../doctors_db.php';
+$required_role = 'doctor';
+require_once '../../../php/check_session.php';
 
-$id = 2;
-
-$check_user = mysqli_query($conn, "SELECT id FROM doctors WHERE id = 2");
-if (!$check_user || mysqli_num_rows($check_user) == 0) {
-    // Create default test user
-    $create_user = "INSERT INTO doctors (id, username, email, phone_num, name, age, gender, license, workplace, description, created_at) 
-                    VALUES (2, 'hippocrates', 'hippocrates@gmail.com', '2147483647', 'Hippocrates', 30, 'Male', '000-000-000-000', 'Hospital', 'Father of Medicine', NOW())";
-    mysqli_query($conn, $create_user);
+// CHECKING USER LOGIN
+if (!isset($_SESSION['user_id'])) {
+    echo "<script>alert('Please log in first.'); window.location.href='../html/Log In.php';</script>";
+    exit;
 }
 
-// user info
-$user_sql = "SELECT * FROM doctors WHERE id = $id";
+$id = $_SESSION['user_id'];
+
+// USER/DOCTOR INFO
+$user_sql = "SELECT * FROM doctor d INNER JOIN users u ON d.id = u.id WHERE d.id = $id";
 $user_result = mysqli_query($conn, $user_sql);
 
 if ($user_result && mysqli_num_rows($user_result) > 0) {
     $user = mysqli_fetch_assoc($user_result);
 } else {
+    // DEFAULT IF NOT FOUND
     $user = [
-        'id' => 2,
-        'username' => 'hippocrates',
-        'email' => 'hippocrates@gmail.com',
-        'phone_num' => '2147483647',
-        'name' => 'Hippocrates',
-        'age' => 30,
-        'gender' => 'Male',
-        'license' => '000-000-000-000',
-        'workplace' => 'Hospital',
-        'description' => 'Father of Medicine',
-        'created_at' => date('Y-m-d H:i:s')
+        'id' => $id,
+        'username' => '',
+        'email' => '',
+        'phone_num' => '',
+        'name' => '',
+        'age' => '',
+        'gender' => '',
+        'license' => '',
+        'location' => '',
+        'description' => '',
+        'created_at' => ''
     ];
 }
 
-// forms
+// UPDATE INFO
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $section = $_POST['section'];
 
+    // --- ACCOUNT INFO ---
     if ($section === "account") {
         $username = mysqli_real_escape_string($conn, $_POST['username']);
         $email = mysqli_real_escape_string($conn, $_POST['email']);
@@ -45,10 +45,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $name = mysqli_real_escape_string($conn, $_POST['name']);
 
         if (!empty($username) && !empty($name) && !empty($email)) {
-            $sql = "UPDATE doctors SET username='$username', email='$email', phone_num='$phone_num', name='$name' WHERE id=$id";
-            
+            $check = mysqli_query($conn, "SELECT id FROM doctor WHERE id = $id");
+
+            if (mysqli_num_rows($check) > 0) {
+                $sql = "UPDATE doctor 
+                        SET username='$username', email='$email', phone_num='$phone_num', name='$name' 
+                        WHERE id=$id";
+            } else {
+                $sql = "INSERT INTO doctor (id, username, email, phone_num, name, created_at)
+                        VALUES ($id, '$username', '$email', '$phone_num', '$name', NOW())";
+            }
+
             if (mysqli_query($conn, $sql)) {
-                echo "<script>alert('Account information updated successfully!');</script>";
+                echo "<script>alert('Account info updated!');</script>";
             } else {
                 echo "<script>alert('Error: " . mysqli_error($conn) . "');</script>";
             }
@@ -57,29 +66,32 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 
+    // --- PERSONAL INFO ---
     if ($section === "personal_info") {
         $age = intval($_POST['age']);
         $gender = mysqli_real_escape_string($conn, $_POST['gender']);
         $license = mysqli_real_escape_string($conn, $_POST['license']);
-        $workplace = mysqli_real_escape_string($conn, $_POST['workplace']);
-        $description = mysqli_real_escape_string($conn, $_POST['description']);
+        $location = mysqli_real_escape_string($conn, $_POST['location']); 
+        $description = mysqli_real_escape_string($conn, $_POST['description']); 
 
-        $check = mysqli_query($conn, "SELECT * FROM doctors WHERE id=$id");
+        $check = mysqli_query($conn, "SELECT id FROM doctor WHERE id = $id");
+
         if (mysqli_num_rows($check) > 0) {
-            $sql = "UPDATE doctors SET age=$age, gender='$gender', license='$license', workplace='$workplace', description='$description' WHERE id=$id";
+            $sql = "UPDATE doctor 
+                    SET age=$age, gender='$gender', license='$license', location='$location', description='$description'
+                    WHERE id=$id";
         } else {
-            $sql = "INSERT INTO doctors (id, age, gender, license, workplace, description)
-                    VALUES ($id, $age, '$gender', '$license', '$workplace', 'description')";
+            $sql = "INSERT INTO doctor (id, age, gender, license, location, description, created_at)
+                    VALUES ($id, $age, '$gender', '$license', '$location', '$description', NOW())";
         }
-        
+
         if (mysqli_query($conn, $sql)) {
-            echo "<script>alert('Personal information saved successfully!');</script>";
+            echo "<script>alert('Personal info updated!');</script>";
         } else {
             echo "<script>alert('Error: " . mysqli_error($conn) . "');</script>";
         }
     }
 
-    
     echo "<meta http-equiv='refresh' content='0'>";
 }
 ?>
@@ -93,15 +105,45 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <link rel="stylesheet" href="profile_style.css">
 </head>
 <body>
+<div class="nav-bar">
+    <div class="nav-container">
+        <div class="logo">
+            <img src="../../../image/logo.png" alt="logo">
+            <h2 class="web-title">LifeLink</h2>
+        </div>
+        <nav>
+            <ul class="nav-menu">
+                <li class="nav-link">
+                    <a href="../dashboard_page/dashboard.php">Dashboard</a>
+                    <hr class="nav-underline">
+                </li>
+                <li class="nav-link">
+                    <a href="../donors_page/donors.php">Donors</a>
+                    <hr class="nav-underline">
+                </li>
+                <li class="nav-link">
+                    <a href="../patients_page/patients.php">Patients</a>
+                    <hr class="nav-underline">
+                </li>
+                <li class="nav-link">
+                    <a href="profile_page/profile_info.php">Profile</a>
+                    <hr class="default-nav">
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
 
 <div id="profile" class="page active">
     <div class="profile-card">
         <div class="profile-header">
             <div class="avatar">👤</div>
             <div class="profile-info">
+                <!-- ✅ changed fullname → name -->
                 <h2><?= htmlspecialchars($user['name'] ?? '') ?></h2>
                 <p><?= htmlspecialchars($user['email'] ?? 'email@example.com') ?></p>
-                <span class="status-badge"><?= htmlspecialchars($user['status'] ?? 'Active') ?></span>
+                <!-- ✅ removed status (no such column) -->
+                <span class="status-badge">Active</span>
             </div>
         </div>
 
@@ -144,6 +186,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             <button class="toggle-edit-btn" onclick="toggleEdit()">✏️ Edit Account Information</button>
 
+            <form action="../../../php/logout.php" method="post" style="display:inline;">
+                 <button type="submit" class="logout">Log Out</button>
+            </form>
+
             <!-- Edit Account Info (Hidden by default) -->
             <div class="edit-section" id="editAccountSection" style="display: none;">
                 <h4 class="section-title">Edit Account Information</h4>
@@ -175,7 +221,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </div>
         </div>
 
-        <!-- Personal INFO TAB -->
+        <!-- PERSONAL INFO TAB -->
         <div class="tab-content" id="tab1">
             <h3 class="section-title">Personal Information</h3>
 
@@ -205,9 +251,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         <input type="text" name="license" value="<?= htmlspecialchars($user['license'] ?? '') ?>" placeholder="Enter your License" required>
                     </label>
 
+                    <!-- ✅ Changed 'workplace' → 'location' to match DB -->
                     <label>
-                        Workplace:
-                        <input type="text" name="workplace" value="<?= htmlspecialchars($user['workplace'] ?? '') ?>" placeholder="Enter your Workplace" required>
+                        Location:
+                        <input type="text" name="location" value="<?= htmlspecialchars($user['location'] ?? '') ?>" placeholder="Enter your Location" required>
                     </label>
 
                     <label>
@@ -216,7 +263,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     </label>
                 </div>
 
-                <button class="btn btn-primary" type="submit">Save Peronal Information</button>
+                <button class="btn btn-primary" type="submit">Save Personal Information</button>
             </form>
         </div>
     </div>

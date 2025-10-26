@@ -112,7 +112,7 @@ require_once '../php/fetch_donations.php';
             <?php foreach ($bloodDonations as $row): ?>
               <tr>
                 <td><?= 'B-' . str_pad($row['id'], 4, '0', STR_PAD_LEFT) ?></td>
-                <td><?= htmlspecialchars($row['blood_type']) ?></td>
+                <td><?= htmlspecialchars($row['blood_cell']) ?></td>
                 <td><?= htmlspecialchars($row['volume']) ?></td>
                 <td class="<?= strtolower($row['status']) ?>"><?= htmlspecialchars($row['status']) ?></td>
                 <td><?= htmlspecialchars($row['hospital']) ?></td>
@@ -122,7 +122,7 @@ require_once '../php/fetch_donations.php';
                   <button class="edit-btn" 
                     data-id="<?= $row['id'] ?>" 
                     data-type="blood"
-                    data-subtype="<?= htmlspecialchars($row['blood_type']) ?>" 
+                    data-subtype="<?= htmlspecialchars($row['blood_cell']) ?>" 
                     data-volume="<?= htmlspecialchars($row['volume']) ?>"
                     data-hospital="<?= htmlspecialchars($row['hospital']) ?>" 
                     data-date="<?= htmlspecialchars($row['availability_date']) ?>">
@@ -185,7 +185,7 @@ require_once '../php/fetch_donations.php';
         </select>
 
         <!-- Blood Type -->
-        <select id="bloodType" name="blood_type" class="hidden">
+        <select id="bloodCell" name="blood_cell" class="hidden">
           <option value="" disabled selected>Select blood donation type</option>
             <option >Whole Blood</option>
             <option >Platelet</option>
@@ -194,28 +194,28 @@ require_once '../php/fetch_donations.php';
         </select>
 
         <!-- blodvolume  -->
-        <select id="wholeVolume" name="blood_volume" class="hidden">
+        <select id="wholeVolume" name="volume" class="hidden">
           <option value="" disabled selected>Select amount</option>
           <option>350 mL</option>
           <option>450 mL</option>
           <option>500 mL</option>
         </select>
 
-        <select id="plateletVolume" name="blood_volume" class="hidden">
+        <select id="plateletVolume" name="volume" class="hidden">
           <option value="" disabled selected>Select amount</option>
           <option>200 mL</option>
           <option>300 mL</option>
           <option>400 mL</option>
         </select>
 
-        <select id="plasmaVolume" name="blood_volume" class="hidden">
+        <select id="plasmaVolume" name="volume" class="hidden">
           <option value="" disabled selected>Select amount</option>
           <option>500 mL</option>
           <option>625 mL</option>
           <option>800 mL</option>
         </select>
 
-        <select id="redVolume" name="blood_volume" class="hidden">
+        <select id="redVolume" name="volume" class="hidden">
           <option value="" disabled selected>Select amount</option>
           <option>350 mL</option>
           <option>400 mL</option>
@@ -243,7 +243,7 @@ require_once '../php/fetch_donations.php';
 
     const donationTypeSelect = document.getElementById('donationType');
     const organSelect = document.getElementById('organ');
-    const bloodSelect = document.getElementById('bloodType');
+    const bloodSelect = document.getElementById('bloodCell');
     const wholeVolume = document.getElementById('wholeVolume');
     const plateletVolume = document.getElementById('plateletVolume');
     const plasmaVolume = document.getElementById('plasmaVolume');

@@ -21,13 +21,13 @@ $user_id = $_SESSION['user_id'];
 
 // BLOOD DONATION UPDATE
 if ($donation_type === 'blood') {
-    if (empty($_POST['blood_type']) || empty($_POST['blood_volume'])) {
-        echo "<script>alert('Blood type and volume are required.'); window.location.href='../html/history.php';</script>";
+    if (empty($_POST['blood_cell']) || empty($_POST['volume'])) {
+        echo "<script>alert('Blood cell and volume are required.'); window.location.href='../html/history.php';</script>";
         exit;
     }
 
-    $blood_type = trim($_POST['blood_type']); // trim for blood_type
-    $blood_volume = trim($_POST['blood_volume']);
+    $blood_cell = trim($_POST['blood_cell']); // trim for blood_cell
+    $volume = trim($_POST['volume']);
 
     // cooldown days
     $cooldown_days_map = [
@@ -38,7 +38,7 @@ if ($donation_type === 'blood') {
     ];
 
     // case-insensitive match
-    $type_key = strtolower($blood_type);
+    $type_key = strtolower($blood_cell);
 
     if (!array_key_exists($type_key, $cooldown_days_map)) {
         echo "<script>alert('Invalid or unknown blood type for cooldown.'); window.location.href='../html/history.php';</script>";
@@ -47,13 +47,13 @@ if ($donation_type === 'blood') {
 
     $cooldown_days = $cooldown_days_map[$type_key];
 
-    // Check last donation of the same blood_type (excluding current record)
+    // Check last donation of the same blood_cell (excluding current record)
     $check_stmt = $conn->prepare("
         SELECT availability_date 
         FROM donations 
         WHERE user_id = ? 
         AND donation_type = 'blood' 
-        AND LOWER(blood_type) = ? 
+        AND LOWER(blood_cell) = ? 
         AND id != ?
         ORDER BY availability_date DESC 
         LIMIT 1
@@ -70,7 +70,7 @@ if ($donation_type === 'blood') {
         //reject if new date is the same as or earlier than the most recent same-type donation.
         if ($new_date <= $last_date) {
             echo "<script>
-                alert('Update rejected: you already have a {$blood_type} donation on " . $last_date->format('F j, Y') . ". Please choose a later availability date to avoid duplication.');
+                alert('Update rejected: you already have a {$blood_cell} donation on " . $last_date->format('F j, Y') . ". Please choose a later availability date to avoid duplication.');
                 window.location.href='../html/history.php';
             </script>";
             exit;
@@ -85,7 +85,7 @@ if ($donation_type === 'blood') {
             $next_allowed = clone $last_date;
             $next_allowed->modify("+{$cooldown_days} days");
             echo "<script>
-                alert('You can only donate {$blood_type} again after " . $next_allowed->format('F j, Y') . " (cooldown: {$cooldown_days} days).');
+                alert('You can only donate {$blood_cell} again after " . $next_allowed->format('F j, Y') . " (cooldown: {$cooldown_days} days).');
                 window.location.href='../html/history.php';
             </script>";
             exit;
@@ -96,10 +96,10 @@ if ($donation_type === 'blood') {
     // Proceed with update
     $stmt = $conn->prepare("
         UPDATE donations 
-        SET hospital = ?, availability_date = ?, blood_type = ?, volume = ?
+        SET hospital = ?, availability_date = ?, blood_cell = ?, volume = ?
         WHERE id = ? AND user_id = ? AND donation_type = 'blood'
     ");
-    $stmt->bind_param("ssssii", $hospital, $availability_date, $blood_type, $blood_volume, $donation_id, $user_id);
+    $stmt->bind_param("ssssii", $hospital, $availability_date, $blood_cell, $volume, $donation_id, $user_id);
 
     if ($stmt->execute()) {
         echo "<script>alert('Blood donation updated successfully.'); window.location.href='../html/history.php';</script>";
